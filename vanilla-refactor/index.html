@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="css/index.css" />
+    <script
+      src="https://kit.fontawesome.com/3bfd3ce9e5.js"
+      crossorigin="anonymous"
+    ></script>
+    <title>Vanilla Refactor</title>
+  </head>
+  <body>
+    <main class="grid">
+      <div class="control-1">
+        <i class="fa-solid fa-x turquoise"></i>
+        <i class="fa-solid fa-o yellow"></i>
+      </div>
+      <div class="control-2 shadow">
+        <div>
+          <p class="turquoise">Player 1</p>
+          <p>You're up!</p>
+        </div>
+        <i class="fa-solid fa-x turquoise circle-icon"></i>
+      </div>
+      <button class="control-3">Reset</button>
+
+      <!-- <i class="fa-solid fa-o yellow"></i> -->
+      <div id="1" class="option shadow"></div>
+      <div id="2" class="option shadow"></div>
+      <div id="3" class="option shadow"></div>
+      <div id="4" class="option shadow"></div>
+      <div id="5" class="option shadow"></div>
+      <div id="6" class="option shadow"></div>
+      <div id="7" class="option shadow"></div>
+      <div id="8" class="option shadow"></div>
+      <div id="9" class="option shadow"></div>
+
+      <div class="score shadow" style="background-color: var(--turquoise)">
+        <p>Player 1</p>
+        <span data-id="player1-stats">5W 2L</span>
+      </div>
+      <div class="score shadow" style="background-color: lightgrey">
+        <p>Ties</p>
+        <span data-id="ties">0</span>
+      </div>
+      <div class="score shadow" style="background-color: var(--yellow)">
+        <p>Player 2</p>
+        <span data-id="player2-stats">5W 2L</span>
+      </div>
+    </main>
+
+    <footer>
+      <p>
+        Original project by
+        <a href="https://twitter.com/megfdev">@megfdev</a> and
+        <a href="https://twitter.com/Ivan00sto">@Ivan00Sto</a>
+      </p>
+
+      <p>
+        Refactored by
+        <a href="https://twitter.com/zg_dev" style="color: var(--turquoise)"
+          >@zg_dev</a
+        >
+      </p>
+    </footer>
+
+    <!-- Modal that opens when game ends -->
+    <div class="modal hidden">
+      <div class="modal-contents">
+        <p>Player 1 wins!</p>
+        <button>Play again</button>
+      </div>
+    </div>
+
+    <!-- This controls the entire application (event listeners, UI changes, saving state, etc.) -->
+    <script src="js/app.js" type="module"></script>
+  </body>
+</html>

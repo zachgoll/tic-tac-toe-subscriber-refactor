@@ -1,0 +1,204 @@
+@import url("https://fonts.googleapis.com/css2?family=Montserrat:wght@500;600&display=swap");
+
+:root {
+  --dark-gray: #1a2a32;
+  --gray: #2e4756;
+  --turquoise: #3cc4bf;
+  --yellow: #f2b147;
+}
+
+* {
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
+  list-style: none;
+  font-family: "Montserrat", sans-serif;
+  border: none;
+}
+
+html,
+body {
+  height: 100%;
+  background-color: #1a2a32;
+}
+
+body {
+  padding: 90px 20px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+button:hover {
+  cursor: pointer;
+  opacity: 90%;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(3, 80px);
+  grid-template-rows: 50px repeat(3, 80px) 60px;
+  gap: 5px;
+}
+
+@media (min-width: 768px) {
+  /**
+    *
+    */
+  .grid {
+    width: 490px;
+    grid-template-columns: repeat(3, 150px);
+    grid-template-rows: 50px repeat(3, 150px) 60px;
+    gap: 20px;
+  }
+}
+
+/* Shared  */
+.hidden {
+  display: none !important;
+}
+
+.yellow {
+  color: var(--yellow);
+}
+
+.turquoise {
+  color: var(--turquoise);
+}
+
+.shadow {
+  box-shadow: rgba(0, 0, 0, 0.4) 0px 2px 4px,
+    rgba(0, 0, 0, 0.3) 0px 7px 13px -3px, rgba(0, 0, 0, 0.2) 0px -3px 0px inset;
+}
+
+/* Game controls (symbols, current turn indicator, wipe score btn) */
+
+.control-1,
+.control-2,
+.control-3 {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 5px;
+}
+
+.control-1 {
+  font-size: 30px;
+}
+
+.control-2 {
+  font-size: 12px;
+  font-weight: 600;
+  display: flex;
+  justify-content: space-around;
+  border-radius: 10px;
+  background-color: var(--gray);
+  white-space: nowrap;
+}
+
+.control-2 p:nth-child(2) {
+  font-size: 10px;
+  font-weight: 400;
+  color: rgba(255, 255, 255, 0.3);
+}
+
+control-2 i {
+  font-size: 16px;
+}
+
+.control-3 {
+  border-radius: 10px;
+  color: white;
+  background-color: transparent;
+  text-decoration: underline;
+}
+
+.control-3:hover {
+  opacity: 90%;
+}
+
+/* Game board buttons  */
+.option {
+  height: 100%;
+  width: 100%;
+  background-color: var(--gray);
+  border-radius: 10px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 3rem;
+}
+
+.option:hover {
+  cursor: pointer;
+  opacity: 90%;
+}
+
+.score {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 60px;
+  border-radius: 10px;
+}
+
+.score p {
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.score span {
+  font-size: 12px;
+  margin-top: 2px;
+}
+
+footer {
+  color: white;
+  margin-top: 50px;
+}
+
+footer p {
+  margin-top: 10px;
+  text-align: center;
+}
+
+footer a {
+  color: var(--yellow);
+}
+
+/* Modal styles - opens when game finishes  */
+
+.modal {
+  display: flex;
+  position: fixed;
+  width: 100%;
+  height: 100%;
+  justify-content: center;
+  align-items: center;
+  background-color: rgba(0, 0, 0, 0.6);
+}
+
+.modal-contents {
+  transform: translateY(-80px);
+  height: 150px;
+  width: 100%;
+  max-width: 300px;
+  background-color: #2a4544;
+  border-radius: 20px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 20px;
+  color: white;
+  margin: 10px;
+}
+
+.modal-contents button {
+  padding: 10px;
+  background-color: var(--turquoise);
+  color: #2a4544;
+  border-radius: 3px;
+}

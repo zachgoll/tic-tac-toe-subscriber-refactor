@@ -1,0 +1,71 @@
+<head>
+  <meta charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="styles.css" />
+  <script
+    src="https://kit.fontawesome.com/3bfd3ce9e5.js"
+    crossorigin="anonymous"
+  ></script>
+  <title>TickyToey</title>
+</head>
+<body>
+  <main>
+    <div class="top">
+      <div class="exAndOh">
+        <i class="fa-solid fa-x"></i>
+        <i class="fa-solid fa-o"></i>
+      </div>
+      <section class="turn">
+        <h3 id="colorChange"><i class="fa-solid fa-x" id="turn"></i> TURN</h3>
+      </section>
+      <div>
+        <button class="clearScore" id="clear-score">Wipe Score</button>
+      </div>
+    </div>
+    <div class="middle">
+      <ul>
+        <li class="box" id="1"></li>
+        <li class="box" id="2"></li>
+        <li class="box" id="3"></li>
+        <li class="box" id="4"></li>
+        <li class="box" id="5"></li>
+        <li class="box" id="6"></li>
+        <li class="box" id="7"></li>
+        <li class="box" id="8"></li>
+        <li class="box" id="9"></li>
+      </ul>
+    </div>
+    <div class="bottom">
+      <ul>
+        <li class="player-one-score">
+          <p>X(Player 1)</p>
+          <span id="player-one-score">0</span>
+        </li>
+        <li class="tie-score">
+          <p>TIES</p>
+          <span id="tie-score">0</span>
+        </li>
+        <li class="player-two-score">
+          <p>O(Player 2)</p>
+          <span id="player-two-score">0</span>
+        </li>
+      </ul>
+    </div>
+    <div class="winner show-winner" id="winner-declaration">
+      <h4 id="winner-text"></h4>
+      <button class="restart-after-win" id="restart-after-win">
+        Play again :)
+      </button>
+    </div>
+  </main>
+  <footer>
+    <p class="twitter meg">
+      <a target="_blank" href="https://twitter.com/megfdev">@megfdev</a>
+    </p>
+    <p class="twitter ivan">
+      <a target="_blank" href="https://twitter.com/Ivan00sto">@Ivan00Sto</a>
+    </p>
+  </footer>
+</body>
+<script src="main.js"></script>
