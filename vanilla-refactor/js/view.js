@@ -1,119 +1,146 @@
+// This import is only for jsdoc typings and intellisense
+import Store from "./store.js";
+
 export default class View {
   constructor() {
-    // The $ prefix contains all of our selected HTML elements
+    /**
+     * Select elements we want to control for convenience and clarity
+     */
     this.$grid = document.querySelector(".grid");
-    this.$options = document.querySelectorAll(".option");
-    this.$resetBtn = document.querySelector(".control-3");
+    this.$squares = document.querySelectorAll(".square");
+    this.$resetBtn = document.querySelector('[data-id="reset-btn"]');
+    this.$newRoundBtn = document.querySelector('[data-id="new-round-btn"]');
     this.$modal = document.querySelector(".modal");
     this.$modalText = this.$modal.querySelector("p");
     this.$modalNewGame = this.$modal.querySelector("button");
-    this.$turnBox = document.querySelector(".control-2");
+    this.$turnBox = document.querySelector('[data-id="turn"]');
     this.$player1Stats = document.querySelector('[data-id="player1-stats"]');
     this.$ties = document.querySelector('[data-id="ties"]');
     this.$player2Stats = document.querySelector('[data-id="player2-stats"]');
-  }
+    this.$menuBtn = document.querySelector('[data-id="menu-button"]');
+    this.$menuPopover = document.querySelector('[data-id="menu-popover"]');
 
-  renderView(currentState) {
-    const {
-      stats: { player1Wins, player2Wins, ties },
-      status: { moves },
-    } = currentState;
-
-    this.$player1Stats.textContent = `${player1Wins}W ${player2Wins}L`;
-    this.$player2Stats.textContent = `${player2Wins}W ${player1Wins}L`;
-    this.$ties.textContent = ties;
-
-    // If current game doesn't have moves, make sure player 1 is up
-    if (!moves.length) {
-      this.setTurnIndicator(1);
-    }
-
-    this.$options.forEach((option) => {
-      // Clears existing icons if there are any
-      option.replaceChildren();
-
-      const move = moves.find((m) => m.squareId === option.id);
-
-      if (!move?.playerId) return;
-
-      this.handlePlayerMove(option, move.playerId);
+    /**
+     * UI-only event listeners
+     *
+     * These are listeners that do not mutate state and therefore
+     * can be contained within View entirely.
+     */
+    this.$menuBtn.addEventListener("click", (event) => {
+      this.#toggleMenu();
     });
   }
 
   /**
-   * @param {!Element} el
-   * @param {!number} currentPlayerId
+   * This application follows a declarative rendering methodology
+   * and will re-render every time the state changes
+   *
+   * @param {Store!} store - the store object that contains state getters
    */
-  handlePlayerMove(el, currentPlayerId) {
-    const icon = document.createElement("i");
-    icon.classList.add("fa-solid");
+  render(store) {
+    const { stats, game } = store;
 
-    // Different icon depending on who made the play
-    if (currentPlayerId === 1) {
-      icon.classList.add("fa-x", "turquoise");
-    } else {
-      icon.classList.add("fa-o", "yellow");
-    }
+    this.$player1Stats.textContent = `${stats.p1Wins} wins`;
+    this.$player2Stats.textContent = `${stats.p2Wins} wins`;
+    this.$ties.textContent = stats.ties;
 
-    el.replaceChildren(icon);
+    this.$squares.forEach((square) => {
+      // Clears existing icons if there are any
+      square.replaceChildren();
 
-    const nextPlayerId = currentPlayerId === 1 ? 2 : 1;
+      const move = game.moves.find((m) => m.squareId === +square.id);
 
-    this.setTurnIndicator(nextPlayerId);
-  }
+      if (!move?.player) return;
 
-  openModal(resultText) {
-    this.$modalText.textContent = resultText;
-    this.$modal.classList.remove("hidden");
-  }
-
-  closeModal() {
-    this.$modal.classList.add("hidden");
-  }
-
-  setTurnIndicator(playerId) {
-    // Clear existing content
-    this.$turnBox.replaceChildren();
-
-    if (playerId === 1) {
-      this.$turnBox.insertAdjacentHTML(
-        "afterbegin",
-        `
-      <div>
-        <p class="turquoise">Player 1</p>
-        <p>You're up!</p>
-      </div>
-      <i class="fa-solid fa-x turquoise circle-icon"></i>
-    `
-      );
-    } else {
-      this.$turnBox.insertAdjacentHTML(
-        "afterbegin",
-        `
-      <div>
-        <p class="yellow">Player 2</p>
-        <p>You're up!</p>
-      </div>
-      <i class="fa-solid fa-o yellow circle-icon"></i>
-    `
-      );
-    }
-  }
-
-  bindPlayerMoveEvent(handler) {
-    this.#delegate(this.$grid, ".option", "click", (event) => {
-      handler(event.target);
+      this.#handlePlayerMove(square, move.player);
     });
+
+    if (game.status.isComplete) {
+      this.#openModal(
+        game.status.winner ? `${game.status.winner.name} wins!` : "Tie!"
+      );
+    } else {
+      this.closeAll();
+      this.#setTurnIndicator(game.currentPlayer);
+    }
   }
 
-  bindModalCloseEvent(handler) {
-    this.$modalNewGame.addEventListener("click", (event) =>
+  closeAll() {
+    this.#closeMenu();
+    this.#closeModal();
+  }
+
+  /**
+   * Events that are handled by the "Controller" in app.js
+   * ----------------------------------------------------------
+   */
+
+  bindGameResetEvent(handler) {
+    this.$resetBtn.addEventListener("click", () => handler());
+    this.$modalNewGame.addEventListener("click", () => handler());
+  }
+
+  bindNewRoundEvent(handler) {
+    this.$newRoundBtn.addEventListener("click", (event) =>
       handler(event.target)
     );
   }
 
-  bindResetEvent(handler) {
-    this.$resetBtn.addEventListener("click", (event) => handler(event.target));
+  bindPlayerMoveEvent(handler) {
+    this.#delegate(this.$grid, ".square", "click", (event) => {
+      handler(+event.target.id);
+    });
+  }
+
+  /**
+   * All methods below ⬇️ are private convenience methods used for updating the UI
+   * -----------------------------------------------------------------------------
+   */
+
+  /**
+   * @param {!Element} el
+   * @param {!array} classList
+   */
+  #handlePlayerMove(el, player) {
+    const icon = document.createElement("i");
+    icon.classList.add("fa-solid", player.iconClass, player.colorClass);
+    el.replaceChildren(icon);
+  }
+
+  #setTurnIndicator(player) {
+    const { iconClass, colorClass, name } = player;
+
+    const icon = document.createElement("i");
+    icon.classList.add("fa-solid", iconClass, colorClass);
+
+    const label = document.createElement("p");
+    label.classList.add(colorClass);
+    label.innerText = `${name}, you're up!`;
+
+    this.$turnBox.replaceChildren(icon, label);
+  }
+
+  #openModal(resultText) {
+    this.$modalText.textContent = resultText;
+    this.$modal.classList.remove("hidden");
+  }
+
+  #closeModal() {
+    this.$modal.classList.add("hidden");
+  }
+
+  #closeMenu() {
+    this.$menuPopover.classList.add("hidden");
+    this.$menuBtn.classList.remove("border");
+    this.$menuBtn.querySelector("i").classList.add("fa-chevron-down");
+    this.$menuBtn.querySelector("i").classList.remove("fa-chevron-up");
+  }
+
+  #toggleMenu() {
+    this.$menuPopover.classList.toggle("hidden");
+    this.$menuBtn.classList.toggle("border");
+    this.$menuBtn.querySelector("i").classList.toggle("fa-chevron-down");
+    this.$menuBtn.querySelector("i").classList.toggle("fa-chevron-up");
   }
 
   /**

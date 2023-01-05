@@ -12,42 +12,48 @@
     <title>Vanilla Refactor</title>
   </head>
   <body>
-    <main class="grid">
-      <div class="control-1">
-        <i class="fa-solid fa-x turquoise"></i>
-        <i class="fa-solid fa-o yellow"></i>
-      </div>
-      <div class="control-2 shadow">
-        <div>
-          <p class="turquoise">Player 1</p>
-          <p>You're up!</p>
+    <main>
+      <div class="grid" data-id="grid">
+        <div class="turn" data-id="turn">
+          <i class="fa-solid fa-x turquoise"></i>
+          <p>Player 1, you're up!</p>
         </div>
-        <i class="fa-solid fa-x turquoise circle-icon"></i>
-      </div>
-      <button class="control-3">Reset</button>
 
-      <!-- <i class="fa-solid fa-o yellow"></i> -->
-      <div id="1" class="option shadow"></div>
-      <div id="2" class="option shadow"></div>
-      <div id="3" class="option shadow"></div>
-      <div id="4" class="option shadow"></div>
-      <div id="5" class="option shadow"></div>
-      <div id="6" class="option shadow"></div>
-      <div id="7" class="option shadow"></div>
-      <div id="8" class="option shadow"></div>
-      <div id="9" class="option shadow"></div>
+        <div class="menu">
+          <button class="menu-btn" data-id="menu-button">
+            Actions
+            <i class="fa-solid fa-chevron-down"></i>
+          </button>
 
-      <div class="score shadow" style="background-color: var(--turquoise)">
-        <p>Player 1</p>
-        <span data-id="player1-stats">5W 2L</span>
-      </div>
-      <div class="score shadow" style="background-color: lightgrey">
-        <p>Ties</p>
-        <span data-id="ties">0</span>
-      </div>
-      <div class="score shadow" style="background-color: var(--yellow)">
-        <p>Player 2</p>
-        <span data-id="player2-stats">5W 2L</span>
+          <div class="items border hidden" data-id="menu-popover">
+            <button data-id="reset-btn">Reset</button>
+            <button data-id="new-round-btn">New Round</button>
+          </div>
+        </div>
+
+        <!-- <i class="fa-solid fa-o yellow"></i> -->
+        <div id="1" class="square shadow"></div>
+        <div id="2" class="square shadow"></div>
+        <div id="3" class="square shadow"></div>
+        <div id="4" class="square shadow"></div>
+        <div id="5" class="square shadow"></div>
+        <div id="6" class="square shadow"></div>
+        <div id="7" class="square shadow"></div>
+        <div id="8" class="square shadow"></div>
+        <div id="9" class="square shadow"></div>
+
+        <div class="score shadow" style="background-color: var(--turquoise)">
+          <p>Player 1</p>
+          <span data-id="player1-stats">5W 2L</span>
+        </div>
+        <div class="score shadow" style="background-color: var(--light-gray)">
+          <p>Ties</p>
+          <span data-id="ties">0</span>
+        </div>
+        <div class="score shadow" style="background-color: var(--yellow)">
+          <p>Player 2</p>
+          <span data-id="player2-stats">5W 2L</span>
+        </div>
       </div>
     </main>
 

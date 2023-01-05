@@ -1,10 +1,11 @@
-@import url("https://fonts.googleapis.com/css2?family=Montserrat:wght@500;600&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600&display=swap");
 
 :root {
   --dark-gray: #1a2a32;
   --gray: #2e4756;
   --turquoise: #3cc4bf;
   --yellow: #f2b147;
+  --light-gray: #d3d3d3;
 }
 
 * {
@@ -54,7 +55,8 @@ button:hover {
   }
 }
 
-/* Shared  */
+/* Shared utility classes */
+
 .hidden {
   display: none !important;
 }
@@ -72,54 +74,100 @@ button:hover {
     rgba(0, 0, 0, 0.3) 0px 7px 13px -3px, rgba(0, 0, 0, 0.2) 0px -3px 0px inset;
 }
 
+.border {
+  border: 1px solid rgba(211, 211, 211, 0.4) !important;
+}
+
 /* Game controls (symbols, current turn indicator, wipe score btn) */
 
-.control-1,
-.control-2,
-.control-3 {
+.turn {
+  align-self: center;
+  grid-column-start: 1;
+  grid-column-end: 3;
   display: flex;
-  justify-content: center;
   align-items: center;
-  gap: 5px;
+  gap: 20px;
 }
 
-.control-1 {
-  font-size: 30px;
+@keyframes turn-icon-animation {
+  0% {
+    transform: scale(1);
+  }
+  25% {
+    transform: scale(1.4);
+  }
+  100% {
+    transform: scale(1);
+  }
 }
 
-.control-2 {
-  font-size: 12px;
-  font-weight: 600;
+.turn i {
+  font-size: 1.8rem;
+  margin-left: 10px;
+  animation: 0.6s ease-in-out turn-icon-animation;
+}
+
+@keyframes turn-text-animation {
+  0% {
+    opacity: 0;
+    transform: translateX(-20px);
+  }
+  100% {
+    opacity: 100%;
+    transform: translateX(0);
+  }
+}
+
+.turn p {
+  font-size: 14px;
+  animation: 0.6s ease-in-out turn-text-animation;
+}
+
+.menu {
+  position: relative;
+}
+
+.menu .items {
+  position: absolute;
+  z-index: 10;
+  top: 60px;
+  right: 0;
+  background-color: #203139;
+  border-radius: 2px;
+  padding: 10px;
+}
+
+.menu .items button {
+  background-color: transparent;
+  padding: 8px;
+  color: white;
+}
+
+.menu .items button:hover {
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.menu-btn {
+  width: 100%;
+  height: 100%;
   display: flex;
   justify-content: space-around;
-  border-radius: 10px;
-  background-color: var(--gray);
-  white-space: nowrap;
-}
-
-.control-2 p:nth-child(2) {
-  font-size: 10px;
-  font-weight: 400;
-  color: rgba(255, 255, 255, 0.3);
-}
-
-control-2 i {
-  font-size: 16px;
-}
-
-.control-3 {
+  align-items: center;
   border-radius: 10px;
   color: white;
-  background-color: transparent;
-  text-decoration: underline;
+  background-color: rgba(211, 211, 211, 0.05);
+  border: 1px solid transparent;
 }
 
-.control-3:hover {
-  opacity: 90%;
+.menu-btn:focus,
+.menu-btn:hover {
+  background-color: rgba(211, 211, 211, 0.07);
 }
 
 /* Game board buttons  */
-.option {
+
+.square {
   height: 100%;
   width: 100%;
   background-color: var(--gray);
@@ -130,7 +178,7 @@ control-2 i {
   font-size: 3rem;
 }
 
-.option:hover {
+.square:hover {
   cursor: pointer;
   opacity: 90%;
 }
