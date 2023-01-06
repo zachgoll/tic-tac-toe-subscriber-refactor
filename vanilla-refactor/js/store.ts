@@ -1,3 +1,5 @@
+import type { AppConfig, GameState, Move, Player } from "./types";
+
 const initialState = {
   currentGameMoves: [], // All the player moves for the active game
   history: {
@@ -15,46 +17,29 @@ const initialState = {
  * external location, etc. (just change #getState and #saveState methods)
  */
 export default class Store extends EventTarget {
-  constructor(key) {
+  constructor(
+    private readonly storageKey: string,
+    private readonly config: AppConfig
+  ) {
     // Since we're extending EventTarget, need to call super() so we have ability to create custom events
     super();
 
-    // Key to use for localStorage state object
-    this.storageKey = key;
-  }
-
-  init(config) {
-    this.P1 = config.player1;
-    this.P2 = config.player2;
+    // On first load, need to refresh so localStorage state gets rendered in browser
     this.refreshStorage();
   }
 
-  /** stats() and game() are Convenience "getters"
-   *
-   * To avoid storing a complex state object that is difficult to mutate, we store a simple one (array of moves)
-   * and derive more useful representations of state via these "getters", which can be accessed as properties on
-   * the Store instance object.
-   *
-   * @example
-   *
-   * ```
-   * const store = new Store()
-   *
-   * // Regular property reference (JS evaluates fn under hood)
-   * const game = store.game
-   * const stats = store.stats
-   * ```
-   *
-   * @see - https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Functions/get
-   */
   get stats() {
     const state = this.#getState();
 
     return state.history.currentRoundGames.reduce(
       (prev, curr) => {
         return {
-          p1Wins: prev.p1Wins + (curr.status.winner?.id === this.P1.id ? 1 : 0),
-          p2Wins: prev.p2Wins + (curr.status.winner?.id === this.P2.id ? 1 : 0),
+          p1Wins:
+            prev.p1Wins +
+            (curr.status.winner?.id === this.config.player1.id ? 1 : 0),
+          p2Wins:
+            prev.p2Wins +
+            (curr.status.winner?.id === this.config.player2.id ? 1 : 0),
           ties: prev.ties + (curr.status.winner === null ? 1 : 0),
         };
       },
@@ -74,10 +59,16 @@ export default class Store extends EventTarget {
      *
      * Otherwise, check who played last to determine who's turn it is.
      */
-    let currentPlayer = this.P1;
+    let currentPlayer = this.config.player1;
     if (state.currentGameMoves.length) {
-      const lastPlayer = state.currentGameMoves.at(-1).player;
-      currentPlayer = lastPlayer.id === this.P1.id ? this.P2 : this.P1;
+      const lastPlayer = state.currentGameMoves.at(-1)?.player;
+
+      if (!lastPlayer) throw new Error("No player found");
+
+      currentPlayer =
+        lastPlayer?.id === this.config.player1.id
+          ? this.config.player2
+          : this.config.player1;
     }
 
     const winner = this.#getWinner(state.currentGameMoves);
@@ -92,7 +83,7 @@ export default class Store extends EventTarget {
     };
   }
 
-  playerMove(squareId) {
+  playerMove(squareId: Move["squareId"]) {
     /**
      * Never mutate state directly.  Create copy of state, edit the copy,
      * and save copy as new version of state.
@@ -107,7 +98,7 @@ export default class Store extends EventTarget {
       squareId,
     });
 
-    this.#saveState((prev) => ({ ...prev, currentGameMoves }));
+    this.#saveState((prev: GameState) => ({ ...prev, currentGameMoves }));
   }
 
   /**
@@ -147,13 +138,13 @@ export default class Store extends EventTarget {
     this.#saveState(this.#getState());
   }
 
-  #getWinner(moves) {
+  #getWinner(moves: Move[]): Player | null {
     const p1Moves = moves
-      .filter((move) => move.player.id === this.P1.id)
+      .filter((move) => move.player.id === this.config.player1.id)
       .map((move) => +move.squareId);
 
     const p2Moves = moves
-      .filter((move) => move.player.id === this.P2.id)
+      .filter((move) => move.player.id === this.config.player2.id)
       .map((move) => +move.squareId);
 
     // Our grid starts in top-left corner and increments left=>right, top=>bottom
@@ -174,8 +165,8 @@ export default class Store extends EventTarget {
       const p1Wins = pattern.every((v) => p1Moves.includes(v));
       const p2Wins = pattern.every((v) => p2Moves.includes(v));
 
-      if (p1Wins) winner = this.P1;
-      if (p2Wins) winner = this.P2;
+      if (p1Wins) winner = this.config.player1;
+      if (p2Wins) winner = this.config.player2;
     });
 
     return winner;
@@ -191,7 +182,7 @@ export default class Store extends EventTarget {
    * We are not using Redux here, but it gives a good overview of some essential concepts to managing state:
    * @see https://redux.js.org/understanding/thinking-in-redux/three-principles#changes-are-made-with-pure-functions
    */
-  #saveState(stateOrFn) {
+  #saveState(stateOrFn: ((prev: GameState) => GameState) | GameState) {
     const prevState = this.#getState();
 
     let newState;
@@ -215,7 +206,7 @@ export default class Store extends EventTarget {
     this.dispatchEvent(new Event("statechange"));
   }
 
-  #getState() {
+  #getState(): GameState {
     const item = window.localStorage.getItem(this.storageKey);
     return item ? JSON.parse(item) : initialState;
   }

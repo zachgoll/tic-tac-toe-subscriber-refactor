@@ -1,7 +1,8 @@
+import type { AppConfig } from "./types.js";
 import Store from "./store.js";
 import View from "./view.js";
 
-const config = {
+const config: AppConfig = {
   /**
    * A possible improvement to the game would be to allow for 3+ players
    * and a UI to show a leaderboard.  This would require a refactor since
@@ -24,7 +25,7 @@ const config = {
 // MV* pattern
 function init() {
   // "Model"
-  const store = new Store("game-state-key");
+  const store = new Store("game-state-key", config);
 
   // "View"
   const view = new View();
@@ -63,7 +64,7 @@ function init() {
    * Listen to the custom statechange event that our Store emits every time it changes
    */
   store.addEventListener("statechange", (event) => {
-    view.render(event.target); // event.target is the Store class instance
+    view.render(event.target as Store); // event.target is the Store class instance
   });
 
   /**
@@ -76,8 +77,6 @@ function init() {
     );
     store.refreshStorage();
   });
-
-  store.init(config);
 }
 
 window.addEventListener("load", () => init());
