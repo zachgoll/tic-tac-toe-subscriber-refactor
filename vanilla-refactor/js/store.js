@@ -6,33 +6,47 @@ const initialState = {
   },
 };
 
+/**
+ * Store is (loosely) the "Model" in the MV* or MVC pattern
+ *
+ * Think of this as our abstraction on top of an arbitrary data store.
+ * In this app, we're using localStorage, but this class should not require
+ * much change if we wanted to change our storage location to an in-memory DB,
+ * external location, etc. (just change #getState and #saveState methods)
+ */
 export default class Store extends EventTarget {
   constructor(key) {
+    // Since we're extending EventTarget, need to call super() so we have ability to create custom events
     super();
-    this.storageKey = key;
 
-    /**
-     * Detects changes in local storage from DIFFERENT browser tabs (not the current one)
-     *
-     * This is necessary so that if two players are playing in different tabs, they always see
-     * the latest version of game state.
-     *
-     * @see https://developer.mozilla.org/en-US/docs/Web/API/Window/storage_event
-     */
-    window.addEventListener("storage", () => {
-      console.info(
-        "State changed from another window.  Updating UI with latest state."
-      );
-      this.#refreshStorage();
-    });
+    // Key to use for localStorage state object
+    this.storageKey = key;
   }
 
   init(config) {
     this.P1 = config.player1;
     this.P2 = config.player2;
-    this.#refreshStorage();
+    this.refreshStorage();
   }
 
+  /** stats() and game() are Convenience "getters"
+   *
+   * To avoid storing a complex state object that is difficult to mutate, we store a simple one (array of moves)
+   * and derive more useful representations of state via these "getters", which can be accessed as properties on
+   * the Store instance object.
+   *
+   * @example
+   *
+   * ```
+   * const store = new Store()
+   *
+   * // Regular property reference (JS evaluates fn under hood)
+   * const game = store.game
+   * const stats = store.stats
+   * ```
+   *
+   * @see - https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Functions/get
+   */
   get stats() {
     const state = this.#getState();
 
@@ -79,6 +93,13 @@ export default class Store extends EventTarget {
   }
 
   playerMove(squareId) {
+    /**
+     * Never mutate state directly.  Create copy of state, edit the copy,
+     * and save copy as new version of state.
+     *
+     * @see https://developer.mozilla.org/en-US/docs/Web/API/structuredClone
+     * @see https://redux.js.org/style-guide/#do-not-mutate-state
+     */
     const { currentGameMoves } = structuredClone(this.#getState());
 
     currentGameMoves.push({
@@ -121,6 +142,11 @@ export default class Store extends EventTarget {
     this.#saveState(stateCopy);
   }
 
+  /** When state is changed from another browser tab, state should be refreshed in current tab */
+  refreshStorage() {
+    this.#saveState(this.#getState());
+  }
+
   #getWinner(moves) {
     const p1Moves = moves
       .filter((move) => move.player.id === this.P1.id)
@@ -155,10 +181,16 @@ export default class Store extends EventTarget {
     return winner;
   }
 
-  #refreshStorage() {
-    this.#saveState(this.#getState());
-  }
-
+  /**
+   * Private state reducer that transitions from the old state to the new state
+   * and saves it to localStorage.  Every time state changes, a custom 'statechange'
+   * event is emitted.
+   *
+   * @param {*} stateOrFn can be an object or callback fn
+   *
+   * We are not using Redux here, but it gives a good overview of some essential concepts to managing state:
+   * @see https://redux.js.org/understanding/thinking-in-redux/three-principles#changes-are-made-with-pure-functions
+   */
   #saveState(stateOrFn) {
     const prevState = this.#getState();
 

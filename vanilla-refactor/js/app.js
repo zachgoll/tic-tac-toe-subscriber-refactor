@@ -33,6 +33,12 @@ function init() {
    * "Controller" logic (event listeners + handlers)
    */
   view.bindPlayerMoveEvent((squareId) => {
+    // Check for an existing move at this square.  Don't complete turn if there is one.
+    const existingMove = store.game.moves.find(
+      (move) => move.squareId === squareId
+    );
+    if (existingMove) return;
+
     store.playerMove(squareId);
   });
 
@@ -52,13 +58,26 @@ function init() {
    * changes, we re-render the entire application.
    * -----------------------------------------------------------------------
    */
+
+  /**
+   * Listen to the custom statechange event that our Store emits every time it changes
+   */
   store.addEventListener("statechange", (event) => {
     view.render(event.target); // event.target is the Store class instance
   });
 
-  // Loads existing state from local storage
+  /**
+   * When 2 players are playing from different browser tabs, listen for changes
+   * @see https://developer.mozilla.org/en-US/docs/Web/API/Window/storage_event
+   */
+  window.addEventListener("storage", () => {
+    console.info(
+      "State changed from another window.  Updating UI with latest state."
+    );
+    store.refreshStorage();
+  });
+
   store.init(config);
 }
 
-// On window load, initialize app
 window.addEventListener("load", () => init());

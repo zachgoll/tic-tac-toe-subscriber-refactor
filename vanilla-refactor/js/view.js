@@ -4,7 +4,7 @@ import Store from "./store.js";
 export default class View {
   constructor() {
     /**
-     * Select elements we want to control for convenience and clarity
+     * Pre-select all the elements we'll need (for convenience and clarity)
      */
     this.$grid = document.querySelector(".grid");
     this.$squares = document.querySelectorAll(".square");
@@ -93,7 +93,7 @@ export default class View {
   }
 
   /**
-   * All methods below ⬇️ are private convenience methods used for updating the UI
+   * All methods below ⬇️ are private utility methods used for updating the UI
    * -----------------------------------------------------------------------------
    */
 
