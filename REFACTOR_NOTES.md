@@ -1,9 +1,11 @@
+# Refactor Notes
+
 This file is intended to add context to the examples in this repository. The sections include:
 
 - **Game Design** - generic notes on designing a Tic Tac Toe game that will be used in each refactor example.
-  - Visual Design
-  - Game State
-  - MVC Pattern
+  - [Visual Design](#visual-design)
+  - [Game State](#game-state-design)
+  - [MVC Pattern](#mvc-pattern)
 - **Refactor Examples** - Each of these have dedicated YouTube videos that you can watch to better understand _how_ they were created. Additionally, there are comments throughout the code that attempt to explain important concepts.
   - Vanilla ES6 (see `typescript` branch for a TS implementation)
   - Alpine.js
