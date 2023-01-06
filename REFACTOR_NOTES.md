@@ -44,18 +44,18 @@ In larger web applications, keeping client and DB state in-sync is important and
 
 In this Tic Tac Toe game, instead synchronizing our client state to a database, we will be syncing it to `localStorage`, which will act as our DB.
 
-For some foundational concepts on state management, the Redux documentation provides some great overviews of _why_ we need to manage state and some best practices for managing state in an application. While some could argue Redux has fallen out of favor in the past few years (React has its own way of managing state), it still has some great documentation and is a great place to learn from.
+For some foundational concepts on state management, the Redux documentation provides some great overviews of [_why_ we need to manage state](https://redux.js.org/understanding/thinking-in-redux/motivation) and some [best practices for managing state](https://redux.js.org/style-guide/#priority-a-rules-essential) in an application. While some could argue Redux has fallen out of favor in the past few years (React has its own way of managing state), it still has some great documentation and is a great place to learn from.
 
 ### Tic Tac Toe State Design
 
-There are many ways to approach this, but in efforts to replicate the existing subscriber code provided in the `/original` folder, I have identified a few pieces of state that we will need to keep track of.
+There are many ways to approach this, but in efforts to replicate the existing subscriber code provided in the [/original](https://github.com/zachgoll/subscriber-refactor-1/tree/main/original) folder, I have identified a few pieces of state that we will need to keep track of.
 
 - Game - keeps track of the currently active game state
 - Statistics - keeps track of past games and keeps records of each player
 
 As you will see in the types below, `Scoreboard` can be _derived_ from a list of `Game` results, so we call this "derived state". When designing your state objects, it is usually best-practice to avoid storing "derived state", which will become more clear after reading through the example applications I have built.
 
-Below is a brief outline of our "Game State". I am using TypeScript types to demonstrate, but the game on the `main` branch is written in vanilla JS and will not include these typings explicitly.
+Below is a brief outline of our "Game State". I am using TypeScript types to demonstrate, but the game on the `main` branch is written in vanilla JS and will not include these typings explicitly. If you want to see an implementation in TypeScript, visit the `typescript` branch.
 
 ```ts
 // Below are supporting types (not actual state)
