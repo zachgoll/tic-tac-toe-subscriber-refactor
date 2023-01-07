@@ -24,7 +24,7 @@ const config = {
 // MV* pattern
 function init() {
   // "Model"
-  const store = new Store("game-state-key");
+  const store = new Store("game-state-key", config);
 
   // "View"
   const view = new View();
@@ -77,7 +77,8 @@ function init() {
     store.refreshStorage();
   });
 
-  store.init(config);
+  // On first load of app, load localStorage to trigger a render
+  store.refreshStorage();
 }
 
 window.addEventListener("load", () => init());

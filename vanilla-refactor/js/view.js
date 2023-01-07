@@ -2,23 +2,30 @@
 import Store from "./store.js";
 
 export default class View {
+  $ = {};
+  $$ = {};
+
   constructor() {
     /**
      * Pre-select all the elements we'll need (for convenience and clarity)
      */
-    this.$grid = document.querySelector(".grid");
-    this.$squares = document.querySelectorAll(".square");
-    this.$resetBtn = document.querySelector('[data-id="reset-btn"]');
-    this.$newRoundBtn = document.querySelector('[data-id="new-round-btn"]');
-    this.$modal = document.querySelector(".modal");
-    this.$modalText = this.$modal.querySelector("p");
-    this.$modalNewGame = this.$modal.querySelector("button");
-    this.$turnBox = document.querySelector('[data-id="turn"]');
-    this.$player1Stats = document.querySelector('[data-id="player1-stats"]');
-    this.$ties = document.querySelector('[data-id="ties"]');
-    this.$player2Stats = document.querySelector('[data-id="player2-stats"]');
-    this.$menuBtn = document.querySelector('[data-id="menu-button"]');
-    this.$menuPopover = document.querySelector('[data-id="menu-popover"]');
+
+    // Element lists
+    this.$$.squares = this.#qsAll(".square");
+
+    // Single elements
+    this.$.grid = this.#qs(".grid");
+    this.$.resetBtn = this.#qs('[data-id="reset-btn"]');
+    this.$.newRoundBtn = this.#qs('[data-id="new-round-btn"]');
+    this.$.modal = this.#qs(".modal");
+    this.$.modalText = this.#qs("p", this.$.modal);
+    this.$.modalNewGame = this.#qs("button", this.$.modal);
+    this.$.turnBox = this.#qs('[data-id="turn"]');
+    this.$.player1Stats = this.#qs('[data-id="player1-stats"]');
+    this.$.ties = this.#qs('[data-id="ties"]');
+    this.$.player2Stats = this.#qs('[data-id="player2-stats"]');
+    this.$.menuBtn = this.#qs('[data-id="menu-button"]');
+    this.$.menuPopover = this.#qs('[data-id="menu-popover"]');
 
     /**
      * UI-only event listeners
@@ -26,7 +33,7 @@ export default class View {
      * These are listeners that do not mutate state and therefore
      * can be contained within View entirely.
      */
-    this.$menuBtn.addEventListener("click", (event) => {
+    this.$.menuBtn.addEventListener("click", (event) => {
       this.#toggleMenu();
     });
   }
@@ -40,11 +47,11 @@ export default class View {
   render(store) {
     const { stats, game } = store;
 
-    this.$player1Stats.textContent = `${stats.p1Wins} wins`;
-    this.$player2Stats.textContent = `${stats.p2Wins} wins`;
-    this.$ties.textContent = stats.ties;
+    this.$.player1Stats.textContent = `${stats.p1Wins} wins`;
+    this.$.player2Stats.textContent = `${stats.p2Wins} wins`;
+    this.$.ties.textContent = stats.ties;
 
-    this.$squares.forEach((square) => {
+    this.$$.squares.forEach((square) => {
       // Clears existing icons if there are any
       square.replaceChildren();
 
@@ -76,19 +83,19 @@ export default class View {
    */
 
   bindGameResetEvent(handler) {
-    this.$resetBtn.addEventListener("click", () => handler());
-    this.$modalNewGame.addEventListener("click", () => handler());
+    this.$.resetBtn.addEventListener("click", () => handler());
+    this.$.modalNewGame.addEventListener("click", () => handler());
   }
 
   bindNewRoundEvent(handler) {
-    this.$newRoundBtn.addEventListener("click", (event) =>
+    this.$.newRoundBtn.addEventListener("click", (event) =>
       handler(event.target)
     );
   }
 
   bindPlayerMoveEvent(handler) {
-    this.#delegate(this.$grid, ".square", "click", (event) => {
-      handler(+event.target.id);
+    this.#delegate(this.$.grid, ".square", "click", (el) => {
+      handler(+el.id);
     });
   }
 
@@ -117,30 +124,58 @@ export default class View {
     label.classList.add(colorClass);
     label.innerText = `${name}, you're up!`;
 
-    this.$turnBox.replaceChildren(icon, label);
+    this.$.turnBox.replaceChildren(icon, label);
   }
 
   #openModal(resultText) {
-    this.$modalText.textContent = resultText;
-    this.$modal.classList.remove("hidden");
+    this.$.modalText.textContent = resultText;
+    this.$.modal.classList.remove("hidden");
   }
 
   #closeModal() {
-    this.$modal.classList.add("hidden");
+    this.$.modal.classList.add("hidden");
   }
 
   #closeMenu() {
-    this.$menuPopover.classList.add("hidden");
-    this.$menuBtn.classList.remove("border");
-    this.$menuBtn.querySelector("i").classList.add("fa-chevron-down");
-    this.$menuBtn.querySelector("i").classList.remove("fa-chevron-up");
+    this.$.menuPopover.classList.add("hidden");
+    this.$.menuBtn.classList.remove("border");
+
+    const icon = this.#qs("i", this.$.menuBtn);
+
+    icon.classList.add("fa-chevron-down");
+    icon.classList.remove("fa-chevron-up");
   }
 
   #toggleMenu() {
-    this.$menuPopover.classList.toggle("hidden");
-    this.$menuBtn.classList.toggle("border");
-    this.$menuBtn.querySelector("i").classList.toggle("fa-chevron-down");
-    this.$menuBtn.querySelector("i").classList.toggle("fa-chevron-up");
+    this.$.menuPopover.classList.toggle("hidden");
+    this.$.menuBtn.classList.toggle("border");
+
+    const icon = this.#qs("i", this.$.menuBtn);
+
+    icon.classList.toggle("fa-chevron-down");
+    icon.classList.toggle("fa-chevron-up");
+  }
+
+  /**
+   * The #qs and #qsAll methods are "safe selectors", meaning they
+   * _guarantee_ the elements we select exist in the DOM (otherwise throw an error)
+   */
+  #qs(selector, parent) {
+    const el = parent
+      ? parent.querySelector(selector)
+      : document.querySelector(selector);
+
+    if (!el) throw new Error("Could not find element");
+
+    return el;
+  }
+
+  #qsAll(selector) {
+    const elList = document.querySelectorAll(selector);
+
+    if (!elList) throw new Error("Could not find elements");
+
+    return elList;
   }
 
   /**
@@ -155,7 +190,7 @@ export default class View {
   #delegate(el, selector, eventKey, handler) {
     el.addEventListener(eventKey, (event) => {
       if (event.target.matches(selector)) {
-        handler(event, el);
+        handler(event.target);
       }
     });
   }

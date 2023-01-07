@@ -15,18 +15,15 @@ const initialState = {
  * external location, etc. (just change #getState and #saveState methods)
  */
 export default class Store extends EventTarget {
-  constructor(key) {
+  constructor(key, config) {
     // Since we're extending EventTarget, need to call super() so we have ability to create custom events
     super();
 
     // Key to use for localStorage state object
     this.storageKey = key;
-  }
 
-  init(config) {
-    this.P1 = config.player1;
-    this.P2 = config.player2;
-    this.refreshStorage();
+    // Game config
+    this.config = config;
   }
 
   /** stats() and game() are Convenience "getters"
@@ -53,8 +50,12 @@ export default class Store extends EventTarget {
     return state.history.currentRoundGames.reduce(
       (prev, curr) => {
         return {
-          p1Wins: prev.p1Wins + (curr.status.winner?.id === this.P1.id ? 1 : 0),
-          p2Wins: prev.p2Wins + (curr.status.winner?.id === this.P2.id ? 1 : 0),
+          p1Wins:
+            prev.p1Wins +
+            (curr.status.winner?.id === this.config.player1.id ? 1 : 0),
+          p2Wins:
+            prev.p2Wins +
+            (curr.status.winner?.id === this.config.player2.id ? 1 : 0),
           ties: prev.ties + (curr.status.winner === null ? 1 : 0),
         };
       },
@@ -74,10 +75,13 @@ export default class Store extends EventTarget {
      *
      * Otherwise, check who played last to determine who's turn it is.
      */
-    let currentPlayer = this.P1;
+    let currentPlayer = this.config.player1;
     if (state.currentGameMoves.length) {
       const lastPlayer = state.currentGameMoves.at(-1).player;
-      currentPlayer = lastPlayer.id === this.P1.id ? this.P2 : this.P1;
+      currentPlayer =
+        lastPlayer.id === this.config.player1.id
+          ? this.config.player2
+          : this.config.player1;
     }
 
     const winner = this.#getWinner(state.currentGameMoves);
@@ -149,11 +153,11 @@ export default class Store extends EventTarget {
 
   #getWinner(moves) {
     const p1Moves = moves
-      .filter((move) => move.player.id === this.P1.id)
+      .filter((move) => move.player.id === this.config.player1.id)
       .map((move) => +move.squareId);
 
     const p2Moves = moves
-      .filter((move) => move.player.id === this.P2.id)
+      .filter((move) => move.player.id === this.config.player2.id)
       .map((move) => +move.squareId);
 
     // Our grid starts in top-left corner and increments left=>right, top=>bottom
@@ -174,8 +178,8 @@ export default class Store extends EventTarget {
       const p1Wins = pattern.every((v) => p1Moves.includes(v));
       const p2Wins = pattern.every((v) => p2Moves.includes(v));
 
-      if (p1Wins) winner = this.P1;
-      if (p2Wins) winner = this.P2;
+      if (p1Wins) winner = this.config.player1;
+      if (p2Wins) winner = this.config.player2;
     });
 
     return winner;
