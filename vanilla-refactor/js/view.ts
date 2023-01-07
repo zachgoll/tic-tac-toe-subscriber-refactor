@@ -1,3 +1,4 @@
+import type { Move, Player } from "./types.js";
 import Store from "./store.js";
 
 export default class View {
@@ -21,7 +22,7 @@ export default class View {
     this.$.newRoundBtn = this.#qs('[data-id="new-round-btn"]');
     this.$.modal = this.#qs(".modal");
     this.$.modalText = this.#qs("p", this.$.modal);
-    this.$.modalNewGame = this.#qs("p", this.$.button);
+    this.$.modalNewGame = this.#qs("button", this.$.modal);
     this.$.turnBox = this.#qs('[data-id="turn"]');
     this.$.player1Stats = this.#qs('[data-id="player1-stats"]');
     this.$.ties = this.#qs('[data-id="ties"]');

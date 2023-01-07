@@ -77,6 +77,9 @@ function init() {
     );
     store.refreshStorage();
   });
+
+  // On first load of app, load localStorage to trigger a render
+  store.refreshStorage();
 }
 
 window.addEventListener("load", () => init());

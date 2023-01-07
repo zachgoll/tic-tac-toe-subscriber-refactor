@@ -23,9 +23,6 @@ export default class Store extends EventTarget {
   ) {
     // Since we're extending EventTarget, need to call super() so we have ability to create custom events
     super();
-
-    // On first load, need to refresh so localStorage state gets rendered in browser
-    this.refreshStorage();
   }
 
   get stats() {
