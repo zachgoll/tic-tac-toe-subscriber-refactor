@@ -8,7 +8,6 @@ This file is intended to add context to the examples in this repository. The sec
   - [MVC Pattern](#mvc-pattern)
 - **Refactor Examples** - Each of these have dedicated YouTube videos that you can watch to better understand _how_ they were created. Additionally, there are comments throughout the code that attempt to explain important concepts.
   - Vanilla ES6 (see `typescript` branch for a TS implementation)
-  - Alpine.js
   - React (see `typescript` branch for a TS implementation)
 
 I have created this tutorial in a _sequential_ fashion. Each example builds on and references previous examples. While examples can be viewed in isolation, the best way to learn is to read through them in order!
@@ -42,7 +41,7 @@ When we talk about "state", this can reference many different things. In larger 
 
 In larger web applications, keeping client and DB state in-sync is important and often facilitated via external libraries (like [react-query](https://react-query-v3.tanstack.com/)).
 
-In this Tic Tac Toe game, instead synchronizing our client state to a database, we will be syncing it to `localStorage`, which will act as our DB.
+In this Tic Tac Toe game, instead synchronizing our client state to a database, we will be syncing it to `localStorage`, which will act as our "DB".
 
 For some foundational concepts on state management, the Redux documentation provides some great overviews of [_why_ we need to manage state](https://redux.js.org/understanding/thinking-in-redux/motivation) and some [best practices for managing state](https://redux.js.org/style-guide/#priority-a-rules-essential) in an application. While some could argue Redux has fallen out of favor in the past few years (React has its own way of managing state), it still has some great documentation and is a great place to learn from.
 
@@ -118,9 +117,9 @@ And then later, we can define "getters" to read the array of current moves and g
 
 ## MVC Pattern
 
-Different libraries and frameworks _enable_ different design patterns. Therefore, going from Vanilla => Alpine => React, you'll see slightly different application designs and patterns throughout.
+Different libraries and frameworks _enable_ different design patterns. Therefore, going from Vanilla => React, you'll see slightly different application designs and patterns throughout.
 
-Below, I will explain the classic MVC design pattern as it pertains to our **vanilla refactor**. I will not be covering the design patterns behind the Alpine.js or React refactors as these patterns are more obvious as you use these libraries more and more.
+Below, I will explain the classic MVC design pattern as it pertains to our **vanilla refactor**. I will not be covering the design patterns behind the React refactor as these patterns are more obvious as you use these libraries more and more.
 
 One of the unfortunate things about building Vanilla JavaScript applications is that there are no patterns that you _must_ use. You can get a JavaScript app working with hundreds of _different_ implementations, but if you want to build something that can be **scaled** and **easily debugged**, you'll need some sort of application pattern.
 
@@ -132,10 +131,9 @@ _Tip: If you want to understand a pure MVC pattern better, I suggest building (o
 - `view.js` - This is the "View" of MV\* that is responsible for manipulating DOM elements and registering event listeners.
 - `app.js` - A small file that ties everything together and renders the UI (i.e. the "Controller").
 
-## Vanilla , Alpine.js and React.js Refactor Examples
+## Vanilla and React.js Refactor Examples
 
 I have created a YouTube video walking through the build of each of these.
 
 - [Vanilla JS/TS]()
-- [Alpine.js]()
 - [React]()
