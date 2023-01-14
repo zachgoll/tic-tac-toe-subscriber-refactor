@@ -1,0 +1,97 @@
+/* Game controls (symbols, current turn indicator, wipe score btn) */
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(3, 80px);
+  grid-template-rows: 50px repeat(3, 80px) 60px;
+  gap: 5px;
+}
+
+@media (min-width: 768px) {
+  .grid {
+    width: 490px;
+    grid-template-columns: repeat(3, 150px);
+    grid-template-rows: 50px repeat(3, 150px) 60px;
+    gap: 20px;
+  }
+}
+
+.turn {
+  align-self: center;
+  grid-column-start: 1;
+  grid-column-end: 3;
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+@keyframes turn-icon-animation {
+  0% {
+    transform: scale(1);
+  }
+  25% {
+    transform: scale(1.4);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+.turn i {
+  font-size: 1.8rem;
+  margin-left: 10px;
+  animation: 0.6s ease-in-out turn-icon-animation;
+}
+
+@keyframes turn-text-animation {
+  0% {
+    opacity: 0;
+    transform: translateX(-20px);
+  }
+  100% {
+    opacity: 100%;
+    transform: translateX(0);
+  }
+}
+
+.turn p {
+  font-size: 14px;
+  animation: 0.6s ease-in-out turn-text-animation;
+}
+
+/* Game board buttons  */
+
+.square {
+  height: 100%;
+  width: 100%;
+  background-color: var(--gray);
+  border-radius: 10px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 3rem;
+}
+
+.square:hover {
+  cursor: pointer;
+  opacity: 90%;
+}
+
+.score {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 60px;
+  border-radius: 10px;
+}
+
+.score p {
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.score span {
+  font-size: 12px;
+  margin-top: 2px;
+}
