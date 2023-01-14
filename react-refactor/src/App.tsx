@@ -25,12 +25,8 @@ export default function App() {
   const [state, setState] = useLocalStorage("game-state-key", initialState);
 
   // Derived state (updates on every state change)
-  const { game, stats } = useMemo(() => {
-    return {
-      game: deriveGame(state),
-      stats: deriveStats(state),
-    };
-  }, [state]);
+  const game = deriveGame(state);
+  const stats = deriveStats(state);
 
   const resetGame = (isNewRound: boolean) => {
     setState((prevState) => {
