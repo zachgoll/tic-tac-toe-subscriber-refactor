@@ -49,7 +49,6 @@ export default class Store extends EventTarget {
     const state = this.#getState();
 
     const currentPlayer = this.players[state.currentGameMoves.length % 2];
-    const nextPlayer = this.players[(state.currentGameMoves.length + 1) % 2];
 
     const winningPatterns = [
       [1, 2, 3],
@@ -79,7 +78,6 @@ export default class Store extends EventTarget {
     return {
       moves: state.currentGameMoves,
       currentPlayer,
-      nextPlayer,
       status: {
         isComplete: winner != null || state.currentGameMoves.length === 9,
         winner,
