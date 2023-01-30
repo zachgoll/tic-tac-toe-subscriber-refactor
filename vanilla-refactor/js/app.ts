@@ -1,31 +1,26 @@
-import type { AppConfig } from "./types.js";
+import type { Player } from "./types.js";
 import Store from "./store.js";
 import View from "./view.js";
 
-const config: AppConfig = {
-  /**
-   * A possible improvement to the game would be to allow for 3+ players
-   * and a UI to show a leaderboard.  This would require a refactor since
-   * our logic assumes there are only 2 possible players.
-   */
-  player1: {
+const players: Player[] = [
+  {
     id: 1,
     name: "Player 1",
     iconClass: "fa-x",
     colorClass: "turquoise",
   },
-  player2: {
+  {
     id: 2,
     name: "Player 2",
     iconClass: "fa-o",
     colorClass: "yellow",
   },
-};
+];
 
 // MV* pattern
 function init() {
   // "Model"
-  const store = new Store("game-state-key", config);
+  const store = new Store("game-state-key", players);
 
   // "View"
   const view = new View();

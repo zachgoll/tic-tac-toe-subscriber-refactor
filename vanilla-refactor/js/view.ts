@@ -48,8 +48,8 @@ export default class View {
   render(store: Store) {
     const { stats, game } = store;
 
-    this.$.player1Stats.textContent = `${stats.p1Wins} wins`;
-    this.$.player2Stats.textContent = `${stats.p2Wins} wins`;
+    this.$.player1Stats.textContent = `${stats.playersWithStats[0].wins} wins`;
+    this.$.player2Stats.textContent = `${stats.playersWithStats[1].wins} wins`;
     this.$.ties.textContent = stats.ties.toString();
 
     this.$$.squares.forEach((square) => {

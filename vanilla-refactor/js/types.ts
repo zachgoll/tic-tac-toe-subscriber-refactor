@@ -8,11 +8,6 @@ export type Player = {
   colorClass: string;
 };
 
-export type AppConfig = {
-  player1: Player;
-  player2: Player;
-};
-
 export type Move = {
   player: Player;
   squareId: number; // from 1-9, represents square on game board
