@@ -118,7 +118,7 @@ export default function App() {
             style={{ backgroundColor: "var(--turquoise)" }}
           >
             <p>Player 1</p>
-            <span>{stats.p1Wins} Wins</span>
+            <span>{stats.playersWithStats[0].wins} Wins</span>
           </div>
           <div
             className="score shadow"
@@ -132,7 +132,7 @@ export default function App() {
             style={{ backgroundColor: "var(--yellow)" }}
           >
             <p>Player 2</p>
-            <span>{stats.p2Wins} Wins</span>
+            <span>{stats.playersWithStats[1].wins} Wins</span>
           </div>
         </div>
       </main>
