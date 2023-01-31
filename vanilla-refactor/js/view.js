@@ -93,11 +93,6 @@ export default class View {
    * -----------------------------------------------------------------------------
    */
 
-  /**
-   * @param {!Element} el
-   * @param {!array} classList
-   */
-
   #updateScoreboard(p1Wins, p2Wins, ties) {
     this.$.p1Wins.innerText = `${p1Wins} wins`;
     this.$.p2Wins.innerText = `${p2Wins} wins`;
