@@ -9,41 +9,45 @@
       src="https://kit.fontawesome.com/3bfd3ce9e5.js"
       crossorigin="anonymous"
     ></script>
-    <title>Vanilla Refactor</title>
+    <title>Vanilla JS T3</title>
   </head>
   <body>
     <main>
       <div class="grid" data-id="grid">
+        <!-- Turn indicator -->
         <div class="turn" data-id="turn">
           <i class="fa-solid fa-x turquoise"></i>
-          <p>Player 1, you're up!</p>
+          <p class="turquoise">Player 1, you're up!</p>
         </div>
 
-        <div class="menu">
-          <button class="menu-btn" data-id="menu-button">
+        <!-- Dropdown menu -->
+        <div class="menu" data-id="menu">
+          <button class="menu-btn" data-id="menu-btn">
             Actions
             <i class="fa-solid fa-chevron-down"></i>
           </button>
 
-          <div class="items border hidden" data-id="menu-popover">
+          <div class="items border hidden" data-id="menu-items">
             <button data-id="reset-btn">Reset</button>
             <button data-id="new-round-btn">New Round</button>
           </div>
         </div>
 
-        <div id="1" class="square shadow"></div>
-        <div id="2" class="square shadow"></div>
-        <div id="3" class="square shadow"></div>
-        <div id="4" class="square shadow"></div>
-        <div id="5" class="square shadow"></div>
-        <div id="6" class="square shadow"></div>
-        <div id="7" class="square shadow"></div>
-        <div id="8" class="square shadow"></div>
-        <div id="9" class="square shadow"></div>
+        <!-- Game board -->
+        <div id="1" class="square shadow" data-id="square"></div>
+        <div id="2" class="square shadow" data-id="square"></div>
+        <div id="3" class="square shadow" data-id="square"></div>
+        <div id="4" class="square shadow" data-id="square"></div>
+        <div id="5" class="square shadow" data-id="square"></div>
+        <div id="6" class="square shadow" data-id="square"></div>
+        <div id="7" class="square shadow" data-id="square"></div>
+        <div id="8" class="square shadow" data-id="square"></div>
+        <div id="9" class="square shadow" data-id="square"></div>
 
+        <!-- Scoreboard -->
         <div class="score shadow" style="background-color: var(--turquoise)">
           <p>Player 1</p>
-          <span data-id="player1-stats">0 Wins</span>
+          <span data-id="p1-wins">0 Wins</span>
         </div>
         <div class="score shadow" style="background-color: var(--light-gray)">
           <p>Ties</p>
@@ -51,7 +55,7 @@
         </div>
         <div class="score shadow" style="background-color: var(--yellow)">
           <p>Player 2</p>
-          <span data-id="player2-stats">0 Wins</span>
+          <span data-id="p2-wins">0 Wins</span>
         </div>
       </div>
     </main>
@@ -72,14 +76,13 @@
     </footer>
 
     <!-- Modal that opens when game ends -->
-    <div class="modal hidden">
+    <div class="modal hidden" data-id="modal">
       <div class="modal-contents">
-        <p>Player 1 wins!</p>
-        <button>Play again</button>
+        <p data-id="modal-text">Player 1 wins!</p>
+        <button data-id="modal-btn">Play again</button>
       </div>
     </div>
 
-    <!-- This controls the entire application (event listeners, UI changes, saving state, etc.) -->
     <script src="js/app.js" type="module"></script>
   </body>
 </html>

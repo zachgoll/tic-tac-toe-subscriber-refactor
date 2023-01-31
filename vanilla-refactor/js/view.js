@@ -10,22 +10,23 @@ export default class View {
      * Pre-select all the elements we'll need (for convenience and clarity)
      */
 
-    // Element lists
-    this.$$.squares = this.#qsAll(".square");
-
     // Single elements
-    this.$.grid = this.#qs(".grid");
+    this.$.menu = this.#qs('[data-id="menu"]');
+    this.$.menuBtn = this.#qs('[data-id="menu-btn"]');
+    this.$.menuItems = this.#qs('[data-id="menu-items"]');
     this.$.resetBtn = this.#qs('[data-id="reset-btn"]');
     this.$.newRoundBtn = this.#qs('[data-id="new-round-btn"]');
-    this.$.modal = this.#qs(".modal");
-    this.$.modalText = this.#qs("p", this.$.modal);
-    this.$.modalNewGame = this.#qs("button", this.$.modal);
-    this.$.turnBox = this.#qs('[data-id="turn"]');
-    this.$.player1Stats = this.#qs('[data-id="player1-stats"]');
+    this.$.modal = this.#qs('[data-id="modal"]');
+    this.$.modalText = this.#qs('[data-id="modal-text"]');
+    this.$.modalBtn = this.#qs('[data-id="modal-btn"]');
+    this.$.turn = this.#qs('[data-id="turn"]');
+    this.$.p1Wins = this.#qs('[data-id="p1-wins"]');
+    this.$.p2Wins = this.#qs('[data-id="p2-wins"]');
     this.$.ties = this.#qs('[data-id="ties"]');
-    this.$.player2Stats = this.#qs('[data-id="player2-stats"]');
-    this.$.menuBtn = this.#qs('[data-id="menu-button"]');
-    this.$.menuPopover = this.#qs('[data-id="menu-popover"]');
+    this.$.grid = this.#qs('[data-id="grid"]');
+
+    // Element lists
+    this.$$.squares = this.#qsAll('[data-id="square"]');
 
     /**
      * UI-only event listeners
@@ -42,39 +43,31 @@ export default class View {
    * This application follows a declarative rendering methodology
    * and will re-render every time the state changes
    *
-   * @param {Store!} store - the store object that contains state getters
+   * @see https://www.zachgollwitzer.com/posts/imperative-programming#react-declarative-vs-jquery-imperative
    */
-  render(store) {
-    const { stats, game } = store;
+  render(game, stats) {
+    const { playerWithStats, ties } = stats;
+    const {
+      moves,
+      currentPlayer,
+      status: { isComplete, winner },
+    } = game;
 
-    this.$.player1Stats.textContent = `${stats.playersWithStats[0].wins} wins`;
-    this.$.player2Stats.textContent = `${stats.playersWithStats[1].wins} wins`;
-    this.$.ties.textContent = stats.ties;
+    this.#closeAll();
+    this.#clearMoves();
+    this.#updateScoreboard(
+      playerWithStats[0].wins,
+      playerWithStats[1].wins,
+      ties
+    );
+    this.#initializeMoves(moves);
 
-    this.$$.squares.forEach((square) => {
-      // Clears existing icons if there are any
-      square.replaceChildren();
-
-      const move = game.moves.find((m) => m.squareId === +square.id);
-
-      if (!move?.player) return;
-
-      this.#handlePlayerMove(square, move.player);
-    });
-
-    if (game.status.isComplete) {
-      this.#openModal(
-        game.status.winner ? `${game.status.winner.name} wins!` : "Tie!"
-      );
-    } else {
-      this.closeAll();
-      this.#setTurnIndicator(game.currentPlayer);
+    if (isComplete) {
+      this.#openModal(winner ? `${winner.name} wins!` : "Tie!");
+      return;
     }
-  }
 
-  closeAll() {
-    this.#closeMenu();
-    this.#closeModal();
+    this.#setTurnIndicator(currentPlayer);
   }
 
   /**
@@ -83,20 +76,16 @@ export default class View {
    */
 
   bindGameResetEvent(handler) {
-    this.$.resetBtn.addEventListener("click", () => handler());
-    this.$.modalNewGame.addEventListener("click", () => handler());
+    this.$.resetBtn.addEventListener("click", handler);
+    this.$.modalBtn.addEventListener("click", handler);
   }
 
   bindNewRoundEvent(handler) {
-    this.$.newRoundBtn.addEventListener("click", (event) =>
-      handler(event.target)
-    );
+    this.$.newRoundBtn.addEventListener("click", handler);
   }
 
   bindPlayerMoveEvent(handler) {
-    this.#delegate(this.$.grid, ".square", "click", (el) => {
-      handler(+el.id);
-    });
+    this.#delegate(this.$.grid, '[data-id="square"]', "click", handler);
   }
 
   /**
@@ -108,28 +97,37 @@ export default class View {
    * @param {!Element} el
    * @param {!array} classList
    */
-  #handlePlayerMove(el, player) {
-    const icon = document.createElement("i");
-    icon.classList.add("fa-solid", player.iconClass, player.colorClass);
-    el.replaceChildren(icon);
+
+  #updateScoreboard(p1Wins, p2Wins, ties) {
+    this.$.p1Wins.innerText = `${p1Wins} wins`;
+    this.$.p2Wins.innerText = `${p2Wins} wins`;
+    this.$.ties.innerText = `${ties} ties`;
   }
 
-  #setTurnIndicator(player) {
-    const { iconClass, colorClass, name } = player;
-
-    const icon = document.createElement("i");
-    icon.classList.add("fa-solid", iconClass, colorClass);
-
-    const label = document.createElement("p");
-    label.classList.add(colorClass);
-    label.innerText = `${name}, you're up!`;
-
-    this.$.turnBox.replaceChildren(icon, label);
-  }
-
-  #openModal(resultText) {
-    this.$.modalText.textContent = resultText;
+  #openModal(message) {
     this.$.modal.classList.remove("hidden");
+    this.$.modalText.innerText = message;
+  }
+
+  #closeAll() {
+    this.#closeModal();
+    this.#closeMenu();
+  }
+
+  #clearMoves() {
+    this.$$.squares.forEach((square) => {
+      square.replaceChildren();
+    });
+  }
+
+  #initializeMoves(moves) {
+    this.$$.squares.forEach((square) => {
+      const existingMove = moves.find((move) => move.squareId === +square.id);
+
+      if (existingMove) {
+        this.#handlePlayerMove(square, existingMove.player);
+      }
+    });
   }
 
   #closeModal() {
@@ -137,23 +135,41 @@ export default class View {
   }
 
   #closeMenu() {
-    this.$.menuPopover.classList.add("hidden");
+    this.$.menuItems.classList.add("hidden");
     this.$.menuBtn.classList.remove("border");
 
-    const icon = this.#qs("i", this.$.menuBtn);
+    const icon = this.$.menuBtn.querySelector("i");
 
     icon.classList.add("fa-chevron-down");
     icon.classList.remove("fa-chevron-up");
   }
 
   #toggleMenu() {
-    this.$.menuPopover.classList.toggle("hidden");
+    this.$.menuItems.classList.toggle("hidden");
     this.$.menuBtn.classList.toggle("border");
 
-    const icon = this.#qs("i", this.$.menuBtn);
+    const icon = this.$.menuBtn.querySelector("i");
 
     icon.classList.toggle("fa-chevron-down");
     icon.classList.toggle("fa-chevron-up");
+  }
+
+  #handlePlayerMove(squareEl, player) {
+    const icon = document.createElement("i");
+    icon.classList.add("fa-solid", player.iconClass, player.colorClass);
+    squareEl.replaceChildren(icon);
+  }
+
+  #setTurnIndicator(player) {
+    const icon = document.createElement("i");
+    const label = document.createElement("p");
+
+    icon.classList.add("fa-solid", player.colorClass, player.iconClass);
+
+    label.classList.add(player.colorClass);
+    label.innerText = `${player.name}, you're up!`;
+
+    this.$.turn.replaceChildren(icon, label);
   }
 
   /**
