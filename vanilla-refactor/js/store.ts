@@ -15,6 +15,9 @@ const initialState = {
  * In this app, we're using localStorage, but this class should not require
  * much change if we wanted to change our storage location to an in-memory DB,
  * external location, etc. (just change #getState and #saveState methods)
+ *
+ * This class extends EventTarget so we can emit a `statechange` event when
+ * state changes, which the controller can listen for to know when to re-render the view.
  */
 export default class Store extends EventTarget {
   constructor(
@@ -25,11 +28,29 @@ export default class Store extends EventTarget {
     super();
   }
 
+  /** stats() and game() are Convenience "getters"
+   *
+   * To avoid storing a complex state object that is difficult to mutate, we store a simple one (array of moves)
+   * and derive more useful representations of state via these "getters", which can be accessed as properties on
+   * the Store instance object.
+   *
+   * @example
+   *
+   * ```
+   * const store = new Store()
+   *
+   * // Regular property reference (JS evaluates fn under hood)
+   * const game = store.game
+   * const stats = store.stats
+   * ```
+   *
+   * @see - https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Functions/get
+   */
   get stats() {
     const state = this.#getState();
 
     return {
-      playersWithStats: this.players.map((player) => {
+      playerWithStats: this.players.map((player) => {
         const wins = state.history.currentRoundGames.filter(
           (game) => game.status.winner?.id === player.id
         ).length;
@@ -93,14 +114,14 @@ export default class Store extends EventTarget {
      * @see https://developer.mozilla.org/en-US/docs/Web/API/structuredClone
      * @see https://redux.js.org/style-guide/#do-not-mutate-state
      */
-    const { currentGameMoves } = structuredClone(this.#getState());
+    const stateClone = structuredClone(this.#getState());
 
-    currentGameMoves.push({
-      player: this.game.currentPlayer,
+    stateClone.currentGameMoves.push({
       squareId,
+      player: this.game.currentPlayer,
     });
 
-    this.#saveState((prev: GameState) => ({ ...prev, currentGameMoves }));
+    this.#saveState(stateClone);
   }
 
   /**
@@ -110,16 +131,20 @@ export default class Store extends EventTarget {
    * If the current game is NOT complete, it is deleted.
    */
   reset() {
-    const stateCopy = structuredClone(this.#getState());
+    const stateClone = structuredClone(this.#getState());
 
-    // If game is complete, archive it to history object
-    if (this.game.status.isComplete) {
-      const { moves, status } = this.game;
-      stateCopy.history.currentRoundGames.push({ moves, status });
+    const { status, moves } = this.game;
+
+    if (status.isComplete) {
+      stateClone.history.currentRoundGames.push({
+        moves,
+        status,
+      });
     }
 
-    stateCopy.currentGameMoves = [];
-    this.#saveState(stateCopy);
+    stateClone.currentGameMoves = [];
+
+    this.#saveState(stateClone);
   }
 
   /**
@@ -128,16 +153,11 @@ export default class Store extends EventTarget {
   newRound() {
     this.reset();
 
-    const stateCopy = structuredClone(this.#getState());
-    stateCopy.history.allGames.push(...stateCopy.history.currentRoundGames);
-    stateCopy.history.currentRoundGames = [];
+    const stateClone = structuredClone(this.#getState());
+    stateClone.history.allGames.push(...stateClone.history.currentRoundGames);
+    stateClone.history.currentRoundGames = [];
 
-    this.#saveState(stateCopy);
-  }
-
-  /** When state is changed from another browser tab, state should be refreshed in current tab */
-  refreshStorage() {
-    this.#saveState(this.#getState());
+    this.#saveState(stateClone);
   }
 
   /**
@@ -156,20 +176,16 @@ export default class Store extends EventTarget {
     let newState;
 
     switch (typeof stateOrFn) {
-      // When callback fn is passed, call it with the prior state and derive the new state from it
       case "function":
         newState = stateOrFn(prevState);
         break;
-
-      // When object passed, set it directly
       case "object":
         newState = stateOrFn;
         break;
       default:
-        throw new Error("Must pass object or fn to #saveState() method");
+        throw new Error("Invalid argument passed to saveState");
     }
 
-    // Update state and emit event
     window.localStorage.setItem(this.storageKey, JSON.stringify(newState));
     this.dispatchEvent(new Event("statechange"));
   }

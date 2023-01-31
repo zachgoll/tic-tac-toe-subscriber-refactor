@@ -20,7 +20,7 @@
 html,
 body {
   height: 100%;
-  background-color: #1a2a32;
+  background-color: var(--dark-gray);
 }
 
 body {
@@ -31,31 +31,12 @@ body {
   align-items: center;
 }
 
+/* Shared utility classes */
+
 button:hover {
   cursor: pointer;
   opacity: 90%;
 }
-
-.grid {
-  display: grid;
-  grid-template-columns: repeat(3, 80px);
-  grid-template-rows: 50px repeat(3, 80px) 60px;
-  gap: 5px;
-}
-
-@media (min-width: 768px) {
-  /**
-    *
-    */
-  .grid {
-    width: 490px;
-    grid-template-columns: repeat(3, 150px);
-    grid-template-rows: 50px repeat(3, 150px) 60px;
-    gap: 20px;
-  }
-}
-
-/* Shared utility classes */
 
 .hidden {
   display: none !important;
@@ -78,15 +59,46 @@ button:hover {
   border: 1px solid rgba(211, 211, 211, 0.4) !important;
 }
 
-/* Game controls (symbols, current turn indicator, wipe score btn) */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(3, 80px);
+  grid-template-rows: 50px repeat(3, 80px) 60px;
+  gap: 5px;
+}
+
+@media (min-width: 768px) {
+  .grid {
+    width: 490px;
+    grid-template-columns: repeat(3, 150px);
+    grid-template-rows: 50px repeat(3, 150px) 60px;
+    gap: 20px;
+  }
+}
 
 .turn {
-  align-self: center;
   grid-column-start: 1;
   grid-column-end: 3;
+  align-self: center;
+
   display: flex;
   align-items: center;
   gap: 20px;
+}
+
+@keyframes turn-text-animation {
+  0% {
+    opacity: 0;
+    transform: translateX(-20px);
+  }
+  100% {
+    opacity: 100%;
+    transform: translateX(0);
+  }
+}
+
+.turn p {
+  font-size: 14px;
+  animation: 0.6s ease-in-out turn-text-animation;
 }
 
 @keyframes turn-icon-animation {
@@ -107,45 +119,9 @@ button:hover {
   animation: 0.6s ease-in-out turn-icon-animation;
 }
 
-@keyframes turn-text-animation {
-  0% {
-    opacity: 0;
-    transform: translateX(-20px);
-  }
-  100% {
-    opacity: 100%;
-    transform: translateX(0);
-  }
-}
-
-.turn p {
-  font-size: 14px;
-  animation: 0.6s ease-in-out turn-text-animation;
-}
-
+/* Menu styles  */
 .menu {
   position: relative;
-}
-
-.menu .items {
-  position: absolute;
-  z-index: 10;
-  top: 60px;
-  right: 0;
-  background-color: #203139;
-  border-radius: 2px;
-  padding: 10px;
-}
-
-.menu .items button {
-  background-color: transparent;
-  padding: 8px;
-  color: white;
-}
-
-.menu .items button:hover {
-  text-decoration: underline;
-  cursor: pointer;
 }
 
 .menu-btn {
@@ -165,11 +141,28 @@ button:hover {
   background-color: rgba(211, 211, 211, 0.07);
 }
 
-/* Game board buttons  */
+.items {
+  position: absolute;
+  z-index: 10;
+  top: 60px;
+  right: 0;
+  background-color: #203139;
+  border-radius: 2px;
+  padding: 10px;
+}
+
+.items button {
+  background-color: transparent;
+  padding: 8px;
+  color: white;
+}
+
+.items button:hover {
+  text-decoration: underline;
+  cursor: pointer;
+}
 
 .square {
-  height: 100%;
-  width: 100%;
   background-color: var(--gray);
   border-radius: 10px;
   display: flex;
@@ -188,7 +181,6 @@ button:hover {
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  height: 60px;
   border-radius: 10px;
 }
 
@@ -201,6 +193,12 @@ button:hover {
   font-size: 12px;
   margin-top: 2px;
 }
+
+.actions {
+  background-color: purple;
+}
+
+/* Footer styles */
 
 footer {
   color: white;
@@ -220,16 +218,16 @@ footer a {
 
 .modal {
   display: flex;
+  justify-content: center;
+  align-items: center;
   position: fixed;
   width: 100%;
   height: 100%;
-  justify-content: center;
-  align-items: center;
   background-color: rgba(0, 0, 0, 0.6);
 }
 
 .modal-contents {
-  transform: translateY(-80px);
+  /* transform: translateY(-80px); */
   height: 150px;
   width: 100%;
   max-width: 300px;
